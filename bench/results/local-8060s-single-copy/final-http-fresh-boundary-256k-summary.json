@@ -1,0 +1,16 @@
+{
+  "capacity": 262144,
+  "counted_input": 262008,
+  "server_reserved_positions": 8,
+  "usage": {
+    "input_tokens": 262008,
+    "output_tokens": 128,
+    "cache_read_input_tokens": 0
+  },
+  "stop_reason": "max_tokens",
+  "wall_s": 300.20930576324463,
+  "min_available_gib": 21.542354583740234,
+  "swap_out_pages": 256,
+  "swap_in_pages": 514,
+  "engine_major_faults": 0
+}

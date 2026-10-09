@@ -1,0 +1,23 @@
+{
+  "capacity": 8192,
+  "prompt_tokens": 8064,
+  "max_new": 128,
+  "exit_code": 0,
+  "blocked": null,
+  "rates": {
+    "decode": {
+      "tokens": 128,
+      "ms": 3068.6,
+      "tps": 41.71
+    },
+    "prefill": {
+      "tokens": 8063,
+      "ms": 7195.4,
+      "tps": 1120.58
+    }
+  },
+  "min_available_gib": 26.253917694091797,
+  "swap_out_pages": 1898,
+  "swap_in_pages": 0,
+  "peak_gtt_gib": 58.00498962402344
+}

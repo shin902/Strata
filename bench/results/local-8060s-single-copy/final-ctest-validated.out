@@ -1,0 +1,9 @@
+Test project /home/shi/Strata/build-halo-714
+    Start 1: file_expert_source_test
+1/2 Test #1: file_expert_source_test ..........   Passed    0.20 sec
+    Start 8: hip_expert_cache_staging
+2/2 Test #8: hip_expert_cache_staging .........   Passed    0.09 sec
+
+100% tests passed out of 2
+
+Total Test time (real) =   0.29 sec

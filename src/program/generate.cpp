@@ -3135,6 +3135,24 @@ int main(int argc, char** argv) {
     // a cache from, or --no-prefill-borrow - do the buffers take a reserve, and then this estimate stands in
     // for buffers that cannot be priced exactly yet because the sessions do not exist.  `plan_lend` uses the
     // exact `Prefill::bytes_needed` as soon as it can.
+    bool uma_single_copy = false;
+#if defined(STRATA_USE_HIP) && defined(__linux__)
+    const char* uma_mode = std::getenv("STRATA_UMA_SINGLE_COPY");
+    cudaDeviceProp uma_prop{};
+    bool has_remote_experts = false;
+    for (const int slots : o.expert_cache_remote) has_remote_experts = has_remote_experts || slots > 0;
+    if (uma_mode != nullptr && uma_mode[0] == '1' && !multi_gpu && !has_remote_experts &&
+        o.peer_device < 0 && !profile.empty() && o.expert_cache != 0 &&
+        o.shared_expert_arena.empty() && !o.resident_cpu_experts &&
+        cudaGetDeviceProperties(&uma_prop, 0) == cudaSuccess && uma_prop.integrated) {
+        // Borrowing would overwrite the sole GPU copy and require a persistent CPU backup of the lent experts.
+        o.mmap_experts = o.resident_cpu_experts = o.resident_pin = o.resident_soft = true;
+        o.no_prefill_borrow = true;
+        uma_single_copy = true;
+        std::fprintf(stderr, "strata generate: UMA single-copy experts: GPU cache plus disjoint resident CPU complement; "
+                             "prompt buffers are separate (STRATA_UMA_SINGLE_COPY=1)\n");
+    }
+#endif
     const bool pf_borrow = !o.no_prefill_borrow && !o.expert_profile.empty();
     // (#340: the estimate predates the streamed ring: from 1024-token chunks the prompt path also holds a ring of
     // whole expert blobs, which a split without borrowing sizes at 96 (Prefill::set_ring_override below) and books
@@ -4059,9 +4077,9 @@ int main(int argc, char** argv) {
         // #773: without a RAM budget there is no RAM copy and the file cache IS the expert tier (measured on a
         // 32 GB, 2 x 16 GB rig: forcing unbuffered reads there re-read 163-629 GB from the drive and halved the
         // speed), so STRATA_UNBUFFERED_LOAD=1 is not honoured in that mode
-        if (o.resident_budget > 0) {
+        if (uma_single_copy || o.resident_budget > 0) {
             std::string why;
-            const bool ub = src.set_unbuffered(o.resident_budget, why);
+            const bool ub = src.set_unbuffered(o.resident_budget, why, uma_single_copy);
             std::fprintf(stderr, "strata generate: the file tier reads %s (%s)\n",
                          ub ? "unbuffered" : "through the file cache", why.c_str());
         } else if (const char* env = std::getenv("STRATA_UNBUFFERED_LOAD"); env != nullptr && env[0] != '\0' &&
@@ -4174,6 +4192,7 @@ int main(int argc, char** argv) {
     // numbers if the slots do not fit, instead of handing back a cache smaller than it was asked for.
     mem_mark("the weights, the session and the drafter");
     strata::core::ExpertCache xcache;
+    xcache.use_shared_host_storage(uma_single_copy);
     // THE HEAD BEFORE THE CACHE: the native head and the logits are allocated above, before the expert arena (#620)
     const bool auto_cache = o.expert_cache < 0;
     bool reserve_adapted = false;   // #496: the auto sizing lowered the reserve so a small card's cache fits
@@ -4191,7 +4210,7 @@ int main(int argc, char** argv) {
     auto owned_prefill_mib = [&]() -> int64_t {
         if (!(o.prefill_chunk > 0 && !pf_borrow)) return 0;
         static const bool exact = [] { const char* v = std::getenv("STRATA_OWNED_PRICE"); return v != nullptr && std::string(v) == "exact"; }();
-        if (!exact) return 160 + (o.prefill_chunk * 680) / 1024;
+        if (!exact && !uma_single_copy) return 160 + (o.prefill_chunk * 680) / 1024;
         const int64_t mib = ((int64_t) strata::prefill::Prefill::bytes_needed_owned(g, ss, o.prefill_chunk) + (1 << 20) - 1) >> 20;
         std::fprintf(stderr, "strata generate: STRATA_OWNED_PRICE=exact: the prompt path's own buffers for a %lld-token chunk: %lld MiB (the 0.1.39 rule: %lld MiB)\n",
                      (long long) o.prefill_chunk, (long long) mib, (long long) (160 + (o.prefill_chunk * 680) / 1024));
@@ -6023,6 +6042,12 @@ int main(int argc, char** argv) {
                          (long long) o.prefill_chunk, (long long) (xcache.slots() - lend_from),
                          (long long) src.resident_lent_slots());
         if (resident_ok) {
+            if (uma_single_copy && xcache.resident() == g.n_layers * g.n_expert) {
+                // No loan or missing expert can invalidate these CPU aliases of the sole GPU allocation.
+                src.share_gpu_experts(&xcache);
+                std::fprintf(stderr, "strata generate: UMA shared expert aliases: all %lld experts read by CPU/GPU "
+                                     "from one allocation\n", (long long) xcache.resident());
+            }
             // --adapt-async: twice the exchange buffers - the second half bounces the copies in whose source is not
             // page-locked (an asynchronous copy instead of the driver's staged, synchronous one)
             if (o.adapt_async && !src.reserve_exchanges(2 * std::min<int64_t>(o.adapt_swaps, 96), err))
@@ -10444,11 +10469,13 @@ int main(int argc, char** argv) {
                         chain_n = policy.chain(T, p_mtp, chain_n, cm);
                     }
                 }
-                const int T_mtp = T;
-                T += chain_n;
+                if (p >= o.max_context) break;
+                const int room = (int) std::min<int64_t>(T + chain_n, o.max_context - p);
+                const int T_mtp = std::min(T, room);
+                chain_n = std::min(chain_n, room - T_mtp);
+                T = T_mtp + chain_n;
                 const bool timed_round = !first_window;
                 const Clock::time_point round0 = Clock::now();
-                if (p + T > o.max_context) break;
                 window[0] = x;
                 for (int i = 1; i < T_mtp; ++i) window[(size_t) i] = from_sfx ? sbuf[(size_t) i - 1] : drafts[(size_t) i - 1];
                 for (int i = 0; i < chain_n; ++i) window[(size_t) (T_mtp + i)] = cbuf[(size_t) i];
@@ -11540,14 +11567,17 @@ int main(int argc, char** argv) {
                     chain_n = policy.chain(T, p_mtp, chain_n, cm);
                 }
             }
-            const int T_mtp = T;
-            T += chain_n;
-            const bool timed_round = !first_window;
-            ++window_hist[(size_t) T];
-            if (p + T > o.max_context) {
+            if (p >= o.max_context) {
                 std::fprintf(stderr, "strata generate: ran out of context at position %lld\n", (long long) p);
                 return 2;
             }
+            // Rejecting a speculative window near the boundary loses valid remaining output positions.
+            const int room = (int) std::min<int64_t>(T + chain_n, o.max_context - p);
+            const int T_mtp = std::min(T, room);
+            chain_n = std::min(chain_n, room - T_mtp);
+            T = T_mtp + chain_n;
+            const bool timed_round = !first_window;
+            ++window_hist[(size_t) T];
             window[0] = x;
             for (int i = 1; i < T; ++i) {
                 const size_t at = produced.size() - 1 + (size_t) i;

@@ -1,0 +1,12 @@
+{
+  "capacity": 8192,
+  "prompt_tokens": 8064,
+  "max_new": 128,
+  "exit_code": -15,
+  "blocked": "RAM safety floor or >32 MiB system swap-out",
+  "rates": {},
+  "min_available_gib": 32.008785247802734,
+  "swap_out_pages": 9364,
+  "swap_in_pages": 7,
+  "peak_gtt_gib": 52.66647720336914
+}

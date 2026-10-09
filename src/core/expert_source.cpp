@@ -897,6 +897,7 @@ bool FileExpertSource::open(const std::string& pack_dir, int64_t n_layers, int64
 }
 
 void FileExpertSource::close() {
+    shared_cache_ = nullptr;
     io_stop();
     inputs_.clear();
     if (complement_arena_ != nullptr) {
@@ -1457,11 +1458,15 @@ bool FileExpertSource::open_direct(std::string& why) {
 #endif
 }
 
-bool FileExpertSource::set_unbuffered(uint64_t ram_bytes, std::string& why) {
+bool FileExpertSource::set_unbuffered(uint64_t ram_bytes, std::string& why, bool force) {
 #if defined(_WIN32) || defined(__linux__)
     if (base_ == nullptr || paths_.empty() || !direct_.empty()) {
         why = !direct_.empty() ? "already unbuffered" : "no expert files open";
         return !direct_.empty();
+    }
+    if (force) {
+        why = "shared UMA expert storage: bypass the duplicate startup file cache";
+        return open_direct(why);
     }
     // #577: the file tier reads the experts outside the RAM copy, not every byte of the shards (dense weights, the
     // PLE table), and the copy holds at most every expert - the budget asked for can be more than that
@@ -1937,6 +1942,7 @@ void FileExpertSource::begin_layer(int64_t layer, const int32_t* ids, int64_t k)
 }
 
 bool FileExpertSource::transient(int64_t layer, int64_t expert) const {
+    if (shared_blob(layer, expert) != nullptr) return false;
     // the io-prefetch staging of the experts.bin tier is the decode's: the prompt path keeps reading the mapping
     // (its own read-ahead hints), so this answers as it did without io prefetch
     if ((role_ptr_.empty() && direct_.empty()) || layer < 0 || expert < 0 || layer >= n_layers_ || expert >= n_expert_) return false;
@@ -1951,6 +1957,10 @@ bool FileExpertSource::copy_blob(int64_t layer, int64_t expert, uint8_t* dst) {
         return false;
     const size_t index = (size_t) layer * (size_t) n_expert_ + (size_t) expert;
     const uint64_t bytes = layer_blob_bytes_[(size_t) layer];
+    if (const uint8_t* shared = shared_blob(layer, expert)) {
+        std::memcpy(dst, shared, (size_t) bytes);
+        return true;
+    }
     if (complement_ready_) {
         const uint8_t* held =
             resident_blob(index);
@@ -2738,7 +2748,31 @@ const uint8_t* FileExpertSource::resident_blob(int64_t layer, int64_t expert) co
     return resident_blob(index);   // through the rotation's ownership table when STRATA_EXCHANGE_ROTATE is on
 }
 
+void FileExpertSource::share_gpu_experts(const ExpertCache* cache) {
+    shared_cache_ = cache;
+    if (cache == nullptr || io_pf_) return;
+    // Once every expert has a stable shared alias, startup assembly buffers have no remaining consumer.
+    std::lock_guard<std::mutex> lock(stage_mu_);
+    const uint64_t released = stage_buf_.size() * stage_blob_;
+    stage_buf_.clear();
+    stage_key_.clear();
+    stage_epoch_.clear();
+    stage_used_.clear();
+    stage_busy_.clear();
+    stage_pf_.clear();
+    stage_of_.clear();
+    std::fprintf(stderr, "FileExpertSource: released %.2f GiB of startup staging after binding shared experts\n",
+                 (double) released / 1073741824.0);
+}
+
+const uint8_t* FileExpertSource::shared_blob(int64_t layer, int64_t expert) const {
+    if (shared_cache_ == nullptr || layer < 0 || expert < 0 || layer >= n_layers_ || expert >= n_expert_)
+        return nullptr;
+    return shared_cache_->host_slot(shared_cache_->slot_of(layer, expert));
+}
+
 const uint8_t* FileExpertSource::blob_stable(int64_t layer, int64_t expert) {
+    if (const uint8_t* shared = shared_blob(layer, expert)) return shared;
     if (io_pf_ && role_ptr_.empty() && direct_.empty()) {
         if (complement_ready_ && layer >= 0 && expert >= 0 && layer < n_layers_ && expert < n_expert_) {
             const size_t index = (size_t) layer * (size_t) n_expert_ + (size_t) expert;
@@ -2752,6 +2786,7 @@ const uint8_t* FileExpertSource::blob_stable(int64_t layer, int64_t expert) {
 }
 
 const uint8_t* FileExpertSource::blob(int64_t layer, int64_t expert) {
+    if (const uint8_t* shared = shared_blob(layer, expert)) return shared;
     if (base_ == nullptr || layer < 0 || expert < 0 || layer >= n_layers_ || expert >= n_expert_) return nullptr;
     const size_t index = (size_t) layer * (size_t) n_expert_ + (size_t) expert;
     const uint8_t* result = nullptr;
@@ -2792,6 +2827,7 @@ const uint8_t* FileExpertSource::blob(int64_t layer, int64_t expert) {
 }
 
 bool FileExpertSource::pinned(int64_t layer, int64_t expert) const {
+    if (shared_blob(layer, expert) != nullptr) return true;
     if (!complement_ready_ || !complement_pinned_ || complement_host_ == nullptr || layer < 0 || expert < 0 ||
         layer >= n_layers_ || expert >= n_expert_) return false;
     const size_t index = (size_t) layer * (size_t) n_expert_ + (size_t) expert;
@@ -2803,6 +2839,8 @@ bool FileExpertSource::pinned(int64_t layer, int64_t expert) const {
 }
 
 const uint8_t* FileExpertSource::device_alias(int64_t layer, int64_t expert) const {
+    if (shared_blob(layer, expert) != nullptr)
+        return shared_cache_->device_slot(shared_cache_->slot_of(layer, expert));
     if (!pinned(layer, expert) || complement_device_ == nullptr) return nullptr;
     const size_t index = (size_t) layer * (size_t) n_expert_ + (size_t) expert;
     if (exchange_storage_.active()) return exchange_storage_.resident(index).device;

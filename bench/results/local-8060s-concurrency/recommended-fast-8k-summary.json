@@ -1,0 +1,14 @@
+{
+  "solo_pp": {
+    "wall_s": 22.591306731999794,
+    "input_tps_wall": 365.89295599671976,
+    "output_tps_wall": 22.663584983101927,
+    "engine_tps": 935.7
+  },
+  "solo_tg": {
+    "wall_s": 13.493782717003342,
+    "input_tps_wall": 5.712658517151816,
+    "output_tps_wall": 37.9434003598439,
+    "engine_tps": 40.6
+  }
+}

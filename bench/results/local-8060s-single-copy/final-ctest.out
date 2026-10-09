@@ -1,0 +1,73 @@
+Test project /home/shi/Strata/build-halo-714
+    Start 1: file_expert_source_test
+Could not find executable /home/shi/Strata/build-halo-714/file_expert_source_test
+Looked in the following places:
+/home/shi/Strata/build-halo-714/file_expert_source_test
+/home/shi/Strata/build-halo-714/file_expert_source_test
+/home/shi/Strata/build-halo-714/Release/file_expert_source_test
+/home/shi/Strata/build-halo-714/Release/file_expert_source_test
+/home/shi/Strata/build-halo-714/Debug/file_expert_source_test
+/home/shi/Strata/build-halo-714/Debug/file_expert_source_test
+/home/shi/Strata/build-halo-714/MinSizeRel/file_expert_source_test
+/home/shi/Strata/build-halo-714/MinSizeRel/file_expert_source_test
+/home/shi/Strata/build-halo-714/RelWithDebInfo/file_expert_source_test
+/home/shi/Strata/build-halo-714/RelWithDebInfo/file_expert_source_test
+/home/shi/Strata/build-halo-714/Deployment/file_expert_source_test
+/home/shi/Strata/build-halo-714/Deployment/file_expert_source_test
+/home/shi/Strata/build-halo-714/Development/file_expert_source_test
+/home/shi/Strata/build-halo-714/Development/file_expert_source_test
+home/shi/Strata/build-halo-714/file_expert_source_test
+home/shi/Strata/build-halo-714/file_expert_source_test
+home/shi/Strata/build-halo-714/Release/file_expert_source_test
+home/shi/Strata/build-halo-714/Release/file_expert_source_test
+home/shi/Strata/build-halo-714/Debug/file_expert_source_test
+home/shi/Strata/build-halo-714/Debug/file_expert_source_test
+home/shi/Strata/build-halo-714/MinSizeRel/file_expert_source_test
+home/shi/Strata/build-halo-714/MinSizeRel/file_expert_source_test
+home/shi/Strata/build-halo-714/RelWithDebInfo/file_expert_source_test
+home/shi/Strata/build-halo-714/RelWithDebInfo/file_expert_source_test
+home/shi/Strata/build-halo-714/Deployment/file_expert_source_test
+home/shi/Strata/build-halo-714/Deployment/file_expert_source_test
+home/shi/Strata/build-halo-714/Development/file_expert_source_test
+home/shi/Strata/build-halo-714/Development/file_expert_source_test
+1/2 Test #1: file_expert_source_test ..........***Not Run   0.00 sec
+    Start 8: hip_expert_cache_staging
+Could not find executable /home/shi/Strata/build-halo-714/hip_expert_cache_staging
+Looked in the following places:
+/home/shi/Strata/build-halo-714/hip_expert_cache_staging
+/home/shi/Strata/build-halo-714/hip_expert_cache_staging
+/home/shi/Strata/build-halo-714/Release/hip_expert_cache_staging
+/home/shi/Strata/build-halo-714/Release/hip_expert_cache_staging
+/home/shi/Strata/build-halo-714/Debug/hip_expert_cache_staging
+/home/shi/Strata/build-halo-714/Debug/hip_expert_cache_staging
+/home/shi/Strata/build-halo-714/MinSizeRel/hip_expert_cache_staging
+/home/shi/Strata/build-halo-714/MinSizeRel/hip_expert_cache_staging
+/home/shi/Strata/build-halo-714/RelWithDebInfo/hip_expert_cache_staging
+/home/shi/Strata/build-halo-714/RelWithDebInfo/hip_expert_cache_staging
+/home/shi/Strata/build-halo-714/Deployment/hip_expert_cache_staging
+/home/shi/Strata/build-halo-714/Deployment/hip_expert_cache_staging
+/home/shi/Strata/build-halo-714/Development/hip_expert_cache_staging
+/home/shi/Strata/build-halo-714/Development/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/Release/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/Release/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/Debug/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/Debug/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/MinSizeRel/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/MinSizeRel/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/RelWithDebInfo/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/RelWithDebInfo/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/Deployment/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/Deployment/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/Development/hip_expert_cache_staging
+home/shi/Strata/build-halo-714/Development/hip_expert_cache_staging
+2/2 Test #8: hip_expert_cache_staging .........***Not Run   0.00 sec
+
+0% tests passed, 2 tests failed out of 2
+
+Total Test time (real) =   0.00 sec
+
+The following tests FAILED:
+	  1 - file_expert_source_test (Not Run)
+	  8 - hip_expert_cache_staging (Not Run)

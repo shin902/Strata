@@ -175,6 +175,8 @@ public:
     /// The device address of one slot.
     uint8_t* device_slot(int32_t slot);
     const uint8_t* device_slot(int32_t slot) const;
+    void use_shared_host_storage(bool enabled) { shared_host_storage_ = enabled; }
+    const uint8_t* host_slot(int32_t slot) const;
 
     /// Copies `(layer, expert)`'s blob from `host_blob` into `slot` on `stream`.  Asynchronous: the caller
     /// orders it.  Returns false if the indices are out of range rather than reading past the arena.
@@ -219,6 +221,8 @@ private:
     bool open_segmented(uint64_t want, std::string& err);
     void release_segmented();
     uint8_t* base_ = nullptr;
+    uint8_t* host_base_ = nullptr;
+    bool shared_host_storage_ = false;
     int64_t live_slots_ = 0;            ///< #533: slots() - all of them unless shrunk
     int64_t seg_req_ = 0;               ///< #533: the segment size asked for (0: one cudaMalloc)
     int64_t seg_ = 0;                   ///< #533: the segment size used (a multiple of the driver's granularity)

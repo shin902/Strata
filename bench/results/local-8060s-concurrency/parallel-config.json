@@ -1,0 +1,39 @@
+{
+ "exe": "/home/shi/Strata/engine/strata",
+ "args": [
+  "--pack",
+  "/home/shi/Strata-data/packs/iq3_s",
+  "--native",
+  "/home/shi/models/qwen3.8-flash-next/IQ3_S/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00001-of-00002.gguf",
+  "--ple-gguf",
+  "/home/shi/models/qwen3.8-flash-next/IQ3_S/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf",
+  "--expert-profile",
+  "/home/shi/Strata/data/expert-profile.bin",
+  "--expert-cache",
+  "6000",
+  "--prefill",
+  "2048",
+  "--spec",
+  "4",
+  "--spec-min-p",
+  "0.5",
+  "--mtp",
+  "/home/shi/Strata-data/mtp/rt",
+  "--max-context",
+  "32768",
+  "--kv",
+  "int8",
+  "--batch-mtp"
+ ],
+ "cwd": "/home/shi/Strata",
+ "tokenizer": "/home/shi/Strata-data/packs/iq3_s/tokenizer",
+ "model_name": "qwen3.8-flash-next-iq3_s",
+ "log": "/home/shi/Strata/strata-iq3_s.log",
+ "lib_dirs": [
+  "/opt/rocm/lib"
+ ],
+ "port": 8080,
+ "parallel": 2,
+ "backend": "hip",
+ "host": "127.0.0.1"
+}

@@ -1,0 +1,378 @@
+diff --git a/include/strata/core/expert_cache.hpp b/include/strata/core/expert_cache.hpp
+index 17e277d..c39eb80 100644
+--- a/include/strata/core/expert_cache.hpp
++++ b/include/strata/core/expert_cache.hpp
+@@ -175,6 +175,8 @@ public:
+     /// The device address of one slot.
+     uint8_t* device_slot(int32_t slot);
+     const uint8_t* device_slot(int32_t slot) const;
++    void use_shared_host_storage(bool enabled) { shared_host_storage_ = enabled; }
++    const uint8_t* host_slot(int32_t slot) const;
+ 
+     /// Copies `(layer, expert)`'s blob from `host_blob` into `slot` on `stream`.  Asynchronous: the caller
+     /// orders it.  Returns false if the indices are out of range rather than reading past the arena.
+@@ -219,6 +221,8 @@ private:
+     bool open_segmented(uint64_t want, std::string& err);
+     void release_segmented();
+     uint8_t* base_ = nullptr;
++    uint8_t* host_base_ = nullptr;
++    bool shared_host_storage_ = false;
+     int64_t live_slots_ = 0;            ///< #533: slots() - all of them unless shrunk
+     int64_t seg_req_ = 0;               ///< #533: the segment size asked for (0: one cudaMalloc)
+     int64_t seg_ = 0;                   ///< #533: the segment size used (a multiple of the driver's granularity)
+diff --git a/include/strata/core/expert_source.hpp b/include/strata/core/expert_source.hpp
+index 1bbdb41..41fa4f7 100644
+--- a/include/strata/core/expert_source.hpp
++++ b/include/strata/core/expert_source.hpp
+@@ -506,6 +506,7 @@ public:
+     uint64_t resident_bytes() const { return complement_bytes_; }
+     bool complement_pinned() const { return complement_pinned_; }
+     bool complement_ready() const { return complement_ready_; }
++    void share_gpu_experts(const ExpertCache* cache);
+     uint64_t locked_bytes() const { return complement_locked_; }
+     /// Lend-region slots whose experts the compact copy holds (the last ones of the cache).
+     int64_t resident_lent_slots() const { return complement_lent_slots_; }
+@@ -563,7 +564,7 @@ public:
+     /// experts_unbuffered.  The mapped reads' page faults are one small request each, and the pages they bring in
+     /// take the RAM the budget was sized for.  `why` says what decided.
+     /// #577: `ram_bytes` counts up to every expert, and only the experts outside it are what the cache must keep.
+-    bool set_unbuffered(uint64_t ram_bytes, std::string& why);
++    bool set_unbuffered(uint64_t ram_bytes, std::string& why, bool force = false);
+     /// #577: the same decision once the RAM copy is built (pin_cache_complement), from the RAM it really holds and the
+     /// expert bytes outside it; switches either way (startup only, nothing reading).  Returns whether unbuffered.
+     bool recheck_unbuffered(std::string& why);
+@@ -596,7 +597,7 @@ public:
+     /// madvise(WILLNEED) elsewhere), skipping the RAM copy's.
+     void warm(int64_t layer, const int64_t* experts, int64_t n) override;
+     /// Not when the reads are unbuffered: the warmed pages would be read through the file cache, a second time.
+-    bool warms() const override { return (!role_ptr_.empty() || io_pf_) && direct_.empty(); }
++    bool warms() const override { return shared_cache_ == nullptr && (!role_ptr_.empty() || io_pf_) && direct_.empty(); }
+     /// Of the blobs the file tier read for the decode, how many had been warmed for their layer beforehand.
+     int64_t warmed_hits() const { return warm_hits_.load(std::memory_order_relaxed); }
+     int64_t warmed() const { return warm_count_.load(std::memory_order_relaxed); }
+@@ -636,6 +637,8 @@ public:
+ 
+ private:
+     const uint8_t* resident_blob(size_t index) const;
++    const uint8_t* shared_blob(int64_t layer, int64_t expert) const;
++    const ExpertCache* shared_cache_ = nullptr;
+     const uint8_t* mapped_blob(int64_t layer, int64_t expert) const;
+     /// The blob's bytes from the mapped file(s) - experts.bin, or the three GGUF role slices - into `dst`.
+     bool copy_from_files(int64_t layer, int64_t expert, uint8_t* dst) const;
+diff --git a/src/core/expert_cache.cpp b/src/core/expert_cache.cpp
+index 9fe4520..42cb07b 100644
+--- a/src/core/expert_cache.cpp
++++ b/src/core/expert_cache.cpp
+@@ -8,6 +8,9 @@
+ #endif
+ 
+ #include <cuda_runtime.h>
++#if defined(STRATA_USE_HIP)
++#include <hip/hip_ext.h>
++#endif
+ #if !defined(STRATA_EC_NO_VMM)
+ #include <cuda.h>   // #533: the virtual memory management types (the functions come through the runtime's entry points)
+ #endif
+@@ -516,6 +519,15 @@ bool ExpertCache::open(int64_t n_slots, int64_t n_layers, int64_t n_expert, int6
+         }
+         base_ = r->base();
+         vmm_ = std::move(r);
++#if defined(STRATA_USE_HIP) && defined(__linux__)
++    } else if (shared_host_storage_) {
++        if (hipExtMallocWithFlags((void**) &base_, (size_t) want, hipDeviceMallocFinegrained) != hipSuccess) {
++            err = "ExpertCache: fine-grained shared device allocation failed";
++            close();
++            return false;
++        }
++        host_base_ = base_;
++#endif
+     } else if (cudaMalloc((void**) &base_, (size_t) want) != cudaSuccess) {
+         base_ = nullptr;
+         char buf[256];
+@@ -603,6 +615,10 @@ void ExpertCache::close() {
+     } else if (vmm_) {
+         vmm_.reset();   // unmaps and frees every chunk it still holds
+         base_ = nullptr;
++    } else if (host_base_ != nullptr) {
++        cudaFree(base_);
++        host_base_ = nullptr;
++        base_ = nullptr;
+     } else if (base_ != nullptr) {
+         cudaFree(base_);
+         base_ = nullptr;
+@@ -667,6 +683,11 @@ const uint8_t* ExpertCache::device_slot(int32_t slot) const {
+     return base_ + (size_t) slot * (size_t) blob_;
+ }
+ 
++const uint8_t* ExpertCache::host_slot(int32_t slot) const {
++    if (host_base_ == nullptr || slot < 0 || slot >= slots_) return nullptr;
++    return host_base_ + slot_offset(slot);
++}
++
+ bool ExpertCache::fill_slot(int32_t slot, const uint8_t* host_blob, void* stream, std::string& err, int64_t bytes) {
+     const size_t n = (size_t) (bytes > 0 && bytes <= blob_ ? bytes : blob_);
+     uint8_t* dst = device_slot(slot);
+diff --git a/src/core/expert_source.cpp b/src/core/expert_source.cpp
+index fcf8b71..6a1fd8d 100644
+--- a/src/core/expert_source.cpp
++++ b/src/core/expert_source.cpp
+@@ -897,6 +897,7 @@ bool FileExpertSource::open(const std::string& pack_dir, int64_t n_layers, int64
+ }
+ 
+ void FileExpertSource::close() {
++    shared_cache_ = nullptr;
+     io_stop();
+     inputs_.clear();
+     if (complement_arena_ != nullptr) {
+@@ -1457,12 +1458,16 @@ bool FileExpertSource::open_direct(std::string& why) {
+ #endif
+ }
+ 
+-bool FileExpertSource::set_unbuffered(uint64_t ram_bytes, std::string& why) {
++bool FileExpertSource::set_unbuffered(uint64_t ram_bytes, std::string& why, bool force) {
+ #if defined(_WIN32) || defined(__linux__)
+     if (base_ == nullptr || paths_.empty() || !direct_.empty()) {
+         why = !direct_.empty() ? "already unbuffered" : "no expert files open";
+         return !direct_.empty();
+     }
++    if (force) {
++        why = "shared UMA expert storage: bypass the duplicate startup file cache";
++        return open_direct(why);
++    }
+     // #577: the file tier reads the experts outside the RAM copy, not every byte of the shards (dense weights, the
+     // PLE table), and the copy holds at most every expert - the budget asked for can be more than that
+     const uint64_t experts = expert_bytes();
+@@ -1937,6 +1942,7 @@ void FileExpertSource::begin_layer(int64_t layer, const int32_t* ids, int64_t k)
+ }
+ 
+ bool FileExpertSource::transient(int64_t layer, int64_t expert) const {
++    if (shared_blob(layer, expert) != nullptr) return false;
+     // the io-prefetch staging of the experts.bin tier is the decode's: the prompt path keeps reading the mapping
+     // (its own read-ahead hints), so this answers as it did without io prefetch
+     if ((role_ptr_.empty() && direct_.empty()) || layer < 0 || expert < 0 || layer >= n_layers_ || expert >= n_expert_) return false;
+@@ -1951,6 +1957,10 @@ bool FileExpertSource::copy_blob(int64_t layer, int64_t expert, uint8_t* dst) {
+         return false;
+     const size_t index = (size_t) layer * (size_t) n_expert_ + (size_t) expert;
+     const uint64_t bytes = layer_blob_bytes_[(size_t) layer];
++    if (const uint8_t* shared = shared_blob(layer, expert)) {
++        std::memcpy(dst, shared, (size_t) bytes);
++        return true;
++    }
+     if (complement_ready_) {
+         const uint8_t* held =
+             resident_blob(index);
+@@ -2738,7 +2748,31 @@ const uint8_t* FileExpertSource::resident_blob(int64_t layer, int64_t expert) co
+     return resident_blob(index);   // through the rotation's ownership table when STRATA_EXCHANGE_ROTATE is on
+ }
+ 
++void FileExpertSource::share_gpu_experts(const ExpertCache* cache) {
++    shared_cache_ = cache;
++    if (cache == nullptr || io_pf_) return;
++    // Once every expert has a stable shared alias, startup assembly buffers have no remaining consumer.
++    std::lock_guard<std::mutex> lock(stage_mu_);
++    const uint64_t released = stage_buf_.size() * stage_blob_;
++    stage_buf_.clear();
++    stage_key_.clear();
++    stage_epoch_.clear();
++    stage_used_.clear();
++    stage_busy_.clear();
++    stage_pf_.clear();
++    stage_of_.clear();
++    std::fprintf(stderr, "FileExpertSource: released %.2f GiB of startup staging after binding shared experts\n",
++                 (double) released / 1073741824.0);
++}
++
++const uint8_t* FileExpertSource::shared_blob(int64_t layer, int64_t expert) const {
++    if (shared_cache_ == nullptr || layer < 0 || expert < 0 || layer >= n_layers_ || expert >= n_expert_)
++        return nullptr;
++    return shared_cache_->host_slot(shared_cache_->slot_of(layer, expert));
++}
++
+ const uint8_t* FileExpertSource::blob_stable(int64_t layer, int64_t expert) {
++    if (const uint8_t* shared = shared_blob(layer, expert)) return shared;
+     if (io_pf_ && role_ptr_.empty() && direct_.empty()) {
+         if (complement_ready_ && layer >= 0 && expert >= 0 && layer < n_layers_ && expert < n_expert_) {
+             const size_t index = (size_t) layer * (size_t) n_expert_ + (size_t) expert;
+@@ -2752,6 +2786,7 @@ const uint8_t* FileExpertSource::blob_stable(int64_t layer, int64_t expert) {
+ }
+ 
+ const uint8_t* FileExpertSource::blob(int64_t layer, int64_t expert) {
++    if (const uint8_t* shared = shared_blob(layer, expert)) return shared;
+     if (base_ == nullptr || layer < 0 || expert < 0 || layer >= n_layers_ || expert >= n_expert_) return nullptr;
+     const size_t index = (size_t) layer * (size_t) n_expert_ + (size_t) expert;
+     const uint8_t* result = nullptr;
+@@ -2792,6 +2827,7 @@ const uint8_t* FileExpertSource::blob(int64_t layer, int64_t expert) {
+ }
+ 
+ bool FileExpertSource::pinned(int64_t layer, int64_t expert) const {
++    if (shared_blob(layer, expert) != nullptr) return true;
+     if (!complement_ready_ || !complement_pinned_ || complement_host_ == nullptr || layer < 0 || expert < 0 ||
+         layer >= n_layers_ || expert >= n_expert_) return false;
+     const size_t index = (size_t) layer * (size_t) n_expert_ + (size_t) expert;
+@@ -2803,6 +2839,8 @@ bool FileExpertSource::pinned(int64_t layer, int64_t expert) const {
+ }
+ 
+ const uint8_t* FileExpertSource::device_alias(int64_t layer, int64_t expert) const {
++    if (shared_blob(layer, expert) != nullptr)
++        return shared_cache_->device_slot(shared_cache_->slot_of(layer, expert));
+     if (!pinned(layer, expert) || complement_device_ == nullptr) return nullptr;
+     const size_t index = (size_t) layer * (size_t) n_expert_ + (size_t) expert;
+     if (exchange_storage_.active()) return exchange_storage_.resident(index).device;
+diff --git a/src/program/generate.cpp b/src/program/generate.cpp
+index ce8e004..9eb6323 100644
+--- a/src/program/generate.cpp
++++ b/src/program/generate.cpp
+@@ -3135,6 +3135,24 @@ int main(int argc, char** argv) {
+     // a cache from, or --no-prefill-borrow - do the buffers take a reserve, and then this estimate stands in
+     // for buffers that cannot be priced exactly yet because the sessions do not exist.  `plan_lend` uses the
+     // exact `Prefill::bytes_needed` as soon as it can.
++    bool uma_single_copy = false;
++#if defined(STRATA_USE_HIP) && defined(__linux__)
++    const char* uma_mode = std::getenv("STRATA_UMA_SINGLE_COPY");
++    cudaDeviceProp uma_prop{};
++    bool has_remote_experts = false;
++    for (const int slots : o.expert_cache_remote) has_remote_experts = has_remote_experts || slots > 0;
++    if (uma_mode != nullptr && uma_mode[0] == '1' && !multi_gpu && !has_remote_experts &&
++        o.peer_device < 0 && !profile.empty() && o.expert_cache != 0 &&
++        o.shared_expert_arena.empty() && !o.resident_cpu_experts &&
++        cudaGetDeviceProperties(&uma_prop, 0) == cudaSuccess && uma_prop.integrated) {
++        // Borrowing would overwrite the sole GPU copy and require a persistent CPU backup of the lent experts.
++        o.mmap_experts = o.resident_cpu_experts = o.resident_pin = o.resident_soft = true;
++        o.no_prefill_borrow = true;
++        uma_single_copy = true;
++        std::fprintf(stderr, "strata generate: UMA single-copy experts: GPU cache plus disjoint resident CPU complement; "
++                             "prompt buffers are separate (STRATA_UMA_SINGLE_COPY=1)\n");
++    }
++#endif
+     const bool pf_borrow = !o.no_prefill_borrow && !o.expert_profile.empty();
+     // (#340: the estimate predates the streamed ring: from 1024-token chunks the prompt path also holds a ring of
+     // whole expert blobs, which a split without borrowing sizes at 96 (Prefill::set_ring_override below) and books
+@@ -4059,9 +4077,9 @@ int main(int argc, char** argv) {
+         // #773: without a RAM budget there is no RAM copy and the file cache IS the expert tier (measured on a
+         // 32 GB, 2 x 16 GB rig: forcing unbuffered reads there re-read 163-629 GB from the drive and halved the
+         // speed), so STRATA_UNBUFFERED_LOAD=1 is not honoured in that mode
+-        if (o.resident_budget > 0) {
++        if (uma_single_copy || o.resident_budget > 0) {
+             std::string why;
+-            const bool ub = src.set_unbuffered(o.resident_budget, why);
++            const bool ub = src.set_unbuffered(o.resident_budget, why, uma_single_copy);
+             std::fprintf(stderr, "strata generate: the file tier reads %s (%s)\n",
+                          ub ? "unbuffered" : "through the file cache", why.c_str());
+         } else if (const char* env = std::getenv("STRATA_UNBUFFERED_LOAD"); env != nullptr && env[0] != '\0' &&
+@@ -4174,6 +4192,7 @@ int main(int argc, char** argv) {
+     // numbers if the slots do not fit, instead of handing back a cache smaller than it was asked for.
+     mem_mark("the weights, the session and the drafter");
+     strata::core::ExpertCache xcache;
++    xcache.use_shared_host_storage(uma_single_copy);
+     // THE HEAD BEFORE THE CACHE: the native head and the logits are allocated above, before the expert arena (#620)
+     const bool auto_cache = o.expert_cache < 0;
+     bool reserve_adapted = false;   // #496: the auto sizing lowered the reserve so a small card's cache fits
+@@ -4191,7 +4210,7 @@ int main(int argc, char** argv) {
+     auto owned_prefill_mib = [&]() -> int64_t {
+         if (!(o.prefill_chunk > 0 && !pf_borrow)) return 0;
+         static const bool exact = [] { const char* v = std::getenv("STRATA_OWNED_PRICE"); return v != nullptr && std::string(v) == "exact"; }();
+-        if (!exact) return 160 + (o.prefill_chunk * 680) / 1024;
++        if (!exact && !uma_single_copy) return 160 + (o.prefill_chunk * 680) / 1024;
+         const int64_t mib = ((int64_t) strata::prefill::Prefill::bytes_needed_owned(g, ss, o.prefill_chunk) + (1 << 20) - 1) >> 20;
+         std::fprintf(stderr, "strata generate: STRATA_OWNED_PRICE=exact: the prompt path's own buffers for a %lld-token chunk: %lld MiB (the 0.1.39 rule: %lld MiB)\n",
+                      (long long) o.prefill_chunk, (long long) mib, (long long) (160 + (o.prefill_chunk * 680) / 1024));
+@@ -6023,6 +6042,12 @@ int main(int argc, char** argv) {
+                          (long long) o.prefill_chunk, (long long) (xcache.slots() - lend_from),
+                          (long long) src.resident_lent_slots());
+         if (resident_ok) {
++            if (uma_single_copy && xcache.resident() == g.n_layers * g.n_expert) {
++                // No loan or missing expert can invalidate these CPU aliases of the sole GPU allocation.
++                src.share_gpu_experts(&xcache);
++                std::fprintf(stderr, "strata generate: UMA shared expert aliases: all %lld experts read by CPU/GPU "
++                                     "from one allocation\n", (long long) xcache.resident());
++            }
+             // --adapt-async: twice the exchange buffers - the second half bounces the copies in whose source is not
+             // page-locked (an asynchronous copy instead of the driver's staged, synchronous one)
+             if (o.adapt_async && !src.reserve_exchanges(2 * std::min<int64_t>(o.adapt_swaps, 96), err))
+@@ -10444,11 +10469,13 @@ int main(int argc, char** argv) {
+                         chain_n = policy.chain(T, p_mtp, chain_n, cm);
+                     }
+                 }
+-                const int T_mtp = T;
+-                T += chain_n;
++                if (p >= o.max_context) break;
++                const int room = (int) std::min<int64_t>(T + chain_n, o.max_context - p);
++                const int T_mtp = std::min(T, room);
++                chain_n = std::min(chain_n, room - T_mtp);
++                T = T_mtp + chain_n;
+                 const bool timed_round = !first_window;
+                 const Clock::time_point round0 = Clock::now();
+-                if (p + T > o.max_context) break;
+                 window[0] = x;
+                 for (int i = 1; i < T_mtp; ++i) window[(size_t) i] = from_sfx ? sbuf[(size_t) i - 1] : drafts[(size_t) i - 1];
+                 for (int i = 0; i < chain_n; ++i) window[(size_t) (T_mtp + i)] = cbuf[(size_t) i];
+@@ -11540,14 +11567,17 @@ int main(int argc, char** argv) {
+                     chain_n = policy.chain(T, p_mtp, chain_n, cm);
+                 }
+             }
+-            const int T_mtp = T;
+-            T += chain_n;
+-            const bool timed_round = !first_window;
+-            ++window_hist[(size_t) T];
+-            if (p + T > o.max_context) {
++            if (p >= o.max_context) {
+                 std::fprintf(stderr, "strata generate: ran out of context at position %lld\n", (long long) p);
+                 return 2;
+             }
++            // Rejecting a speculative window near the boundary loses valid remaining output positions.
++            const int room = (int) std::min<int64_t>(T + chain_n, o.max_context - p);
++            const int T_mtp = std::min(T, room);
++            chain_n = std::min(chain_n, room - T_mtp);
++            T = T_mtp + chain_n;
++            const bool timed_round = !first_window;
++            ++window_hist[(size_t) T];
+             window[0] = x;
+             for (int i = 1; i < T; ++i) {
+                 const size_t at = produced.size() - 1 + (size_t) i;
+diff --git a/tests/hip/expert_cache_staging.cpp b/tests/hip/expert_cache_staging.cpp
+index a276da1..482cdef 100644
+--- a/tests/hip/expert_cache_staging.cpp
++++ b/tests/hip/expert_cache_staging.cpp
+@@ -1,6 +1,8 @@
+ #include "strata/core/expert_cache.hpp"
+ #include <cstdio>
+ #include <vector>
++#include <cstring>
++#include <hip/hip_runtime.h>
+ 
+ int main() {
+     strata::core::ExpertCache cache;
+@@ -29,6 +31,32 @@ int main() {
+     std::vector<uint8_t> payload(1024, 73);
+     if (!check(cache.fill_slot_blocking(1, payload.data(), err)) ||
+         !check(cache.verify_slot(1, payload.data(), err))) return 1;
+-    std::puts("HIP expert staging: variable slots, repeated payloads, close/reopen passed");
++    cache.close();
++#if defined(__linux__)
++    hipDeviceProp_t properties{};
++    if (hipGetDeviceProperties(&properties, 0) != hipSuccess) return 1;
++    if (properties.integrated) {
++        cache.use_shared_host_storage(true);
++        for (int reopen = 0; reopen < 2; ++reopen) {
++            if (!check(cache.open_sized({4096, 8192, 16384}, 1, 3, err))) return 1;
++            for (int slot = 0; slot < 3; ++slot) {
++                std::vector<uint8_t> payload((size_t) 4096 << slot, (uint8_t) (slot + 19 + reopen));
++                if (!check(cache.fill_slot_blocking(slot, payload.data(), err, payload.size())) ||
++                    hipDeviceSynchronize() != hipSuccess) return 1;
++                const uint8_t* shared = cache.host_slot(slot);
++                if (shared == nullptr || std::memcmp(shared, payload.data(), payload.size()) != 0) return 1;
++                auto* writable = const_cast<uint8_t*>(shared);
++                writable[0] = payload[0] = 83;
++                writable[payload.size() - 1] = payload.back() = 97;
++                if (hipDeviceSynchronize() != hipSuccess ||
++                    !check(cache.verify_slot(slot, payload.data(), err, payload.size()))) return 1;
++            }
++            if (cache.host_slot(-1) != nullptr || cache.host_slot(3) != nullptr) return 1;
++            cache.close();
++            if (cache.host_slot(0) != nullptr) return 1;
++        }
++    }
++#endif
++    std::puts("HIP expert staging: variable slots, close/reopen and platform-supported shared storage passed");
+     return 0;
+ }

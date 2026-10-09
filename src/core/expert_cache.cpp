@@ -8,6 +8,9 @@
 #endif
 
 #include <cuda_runtime.h>
+#if defined(STRATA_USE_HIP)
+#include <hip/hip_ext.h>
+#endif
 #if !defined(STRATA_EC_NO_VMM)
 #include <cuda.h>   // #533: the virtual memory management types (the functions come through the runtime's entry points)
 #endif
@@ -516,6 +519,15 @@ bool ExpertCache::open(int64_t n_slots, int64_t n_layers, int64_t n_expert, int6
         }
         base_ = r->base();
         vmm_ = std::move(r);
+#if defined(STRATA_USE_HIP) && defined(__linux__)
+    } else if (shared_host_storage_) {
+        if (hipExtMallocWithFlags((void**) &base_, (size_t) want, hipDeviceMallocFinegrained) != hipSuccess) {
+            err = "ExpertCache: fine-grained shared device allocation failed";
+            close();
+            return false;
+        }
+        host_base_ = base_;
+#endif
     } else if (cudaMalloc((void**) &base_, (size_t) want) != cudaSuccess) {
         base_ = nullptr;
         char buf[256];
@@ -603,6 +615,10 @@ void ExpertCache::close() {
     } else if (vmm_) {
         vmm_.reset();   // unmaps and frees every chunk it still holds
         base_ = nullptr;
+    } else if (host_base_ != nullptr) {
+        cudaFree(base_);
+        host_base_ = nullptr;
+        base_ = nullptr;
     } else if (base_ != nullptr) {
         cudaFree(base_);
         base_ = nullptr;
@@ -665,6 +681,11 @@ const uint8_t* ExpertCache::device_slot(int32_t slot) const {
     if (slot < 0 || slot >= slots_) return nullptr;
     if (!off_.empty()) return base_ + off_[(size_t) slot];
     return base_ + (size_t) slot * (size_t) blob_;
+}
+
+const uint8_t* ExpertCache::host_slot(int32_t slot) const {
+    if (host_base_ == nullptr || slot < 0 || slot >= slots_) return nullptr;
+    return host_base_ + slot_offset(slot);
 }
 
 bool ExpertCache::fill_slot(int32_t slot, const uint8_t* host_blob, void* stream, std::string& err, int64_t bytes) {

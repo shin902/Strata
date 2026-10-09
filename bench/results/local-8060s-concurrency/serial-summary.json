@@ -1,0 +1,29 @@
+{
+  "solo_pp": {
+    "wall_s": 17.633682280000357,
+    "input_tps_wall": 236.7060908619204,
+    "output_tps_wall": 0.9073544450864222,
+    "engine_tps": 243.5
+  },
+  "solo_tg": {
+    "wall_s": 15.412490752001759,
+    "input_tps_wall": 4.911562217164188,
+    "output_tps_wall": 33.21980906515723,
+    "engine_tps": 35.5
+  },
+  "pp2": {
+    "wall_s": 35.27077708299839,
+    "input_tps_wall": 236.54142862708812,
+    "output_tps_wall": 0.9072666566063551
+  },
+  "tg2": {
+    "wall_s": 32.20080971999778,
+    "input_tps_wall": 4.689323073333275,
+    "output_tps_wall": 31.800442563531618
+  },
+  "mixed": {
+    "wall_s": 35.28403778100255,
+    "input_tps_wall": 120.3077035443005,
+    "output_tps_wall": 14.964273739789583
+  }
+}

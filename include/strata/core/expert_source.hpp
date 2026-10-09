@@ -506,6 +506,7 @@ public:
     uint64_t resident_bytes() const { return complement_bytes_; }
     bool complement_pinned() const { return complement_pinned_; }
     bool complement_ready() const { return complement_ready_; }
+    void share_gpu_experts(const ExpertCache* cache);
     uint64_t locked_bytes() const { return complement_locked_; }
     /// Lend-region slots whose experts the compact copy holds (the last ones of the cache).
     int64_t resident_lent_slots() const { return complement_lent_slots_; }
@@ -563,7 +564,7 @@ public:
     /// experts_unbuffered.  The mapped reads' page faults are one small request each, and the pages they bring in
     /// take the RAM the budget was sized for.  `why` says what decided.
     /// #577: `ram_bytes` counts up to every expert, and only the experts outside it are what the cache must keep.
-    bool set_unbuffered(uint64_t ram_bytes, std::string& why);
+    bool set_unbuffered(uint64_t ram_bytes, std::string& why, bool force = false);
     /// #577: the same decision once the RAM copy is built (pin_cache_complement), from the RAM it really holds and the
     /// expert bytes outside it; switches either way (startup only, nothing reading).  Returns whether unbuffered.
     bool recheck_unbuffered(std::string& why);
@@ -596,7 +597,7 @@ public:
     /// madvise(WILLNEED) elsewhere), skipping the RAM copy's.
     void warm(int64_t layer, const int64_t* experts, int64_t n) override;
     /// Not when the reads are unbuffered: the warmed pages would be read through the file cache, a second time.
-    bool warms() const override { return (!role_ptr_.empty() || io_pf_) && direct_.empty(); }
+    bool warms() const override { return shared_cache_ == nullptr && (!role_ptr_.empty() || io_pf_) && direct_.empty(); }
     /// Of the blobs the file tier read for the decode, how many had been warmed for their layer beforehand.
     int64_t warmed_hits() const { return warm_hits_.load(std::memory_order_relaxed); }
     int64_t warmed() const { return warm_count_.load(std::memory_order_relaxed); }
@@ -636,6 +637,8 @@ public:
 
 private:
     const uint8_t* resident_blob(size_t index) const;
+    const uint8_t* shared_blob(int64_t layer, int64_t expert) const;
+    const ExpertCache* shared_cache_ = nullptr;
     const uint8_t* mapped_blob(int64_t layer, int64_t expert) const;
     /// The blob's bytes from the mapped file(s) - experts.bin, or the three GGUF role slices - into `dst`.
     bool copy_from_files(int64_t layer, int64_t expert, uint8_t* dst) const;

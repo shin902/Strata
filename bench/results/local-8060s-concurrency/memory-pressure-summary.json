@@ -1,0 +1,21 @@
+{
+  "exit_code": 0,
+  "duration_s": 145.35174918174744,
+  "min_available_gib": 24.092010498046875,
+  "min_free_gib": 2.0963134765625,
+  "swap_before_gib": 3.3348388671875,
+  "swap_after_gib": 3.3346023559570312,
+  "peak_swap_gib": 3.3348388671875,
+  "memory_some_stall_pct": 0.05077200681480838,
+  "memory_full_stall_pct": 0.05046310100354184,
+  "deltas": {
+    "pswpin_pages": 0,
+    "pswpout_pages": 0,
+    "global_major_faults": 591,
+    "engine_major_faults": 146,
+    "engine_read_bytes": 335077376,
+    "memory_some_us": 73798,
+    "memory_full_us": 73349,
+    "direct_scans": 1548
+  }
+}

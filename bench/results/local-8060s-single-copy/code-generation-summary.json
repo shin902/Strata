@@ -1,0 +1,26 @@
+{
+  "essay": {
+    "engine_tps_median": 41.2,
+    "peak_1s_max": 54,
+    "first5_median": 41.6,
+    "draft_acceptance": 0.5443298969072164
+  },
+  "python": {
+    "engine_tps_median": 58.8,
+    "peak_1s_max": 70,
+    "first5_median": 58.4,
+    "draft_acceptance": 0.8332046332046332
+  },
+  "typescript": {
+    "engine_tps_median": 57.3,
+    "peak_1s_max": 67,
+    "first5_median": 57.4,
+    "draft_acceptance": 0.8123076923076923
+  },
+  "sql": {
+    "engine_tps_median": 55.4,
+    "peak_1s_max": 66,
+    "first5_median": 55.6,
+    "draft_acceptance": 0.8026214340786431
+  }
+}
