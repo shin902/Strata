@@ -103,7 +103,10 @@ def start_of(p):
         out = subprocess.run(["ps", "-o", "lstart=,stat=", "-p", str(p)], capture_output=True, text=True, timeout=5).stdout.strip()
     except Exception:
         return None
-    return None if not out or out.endswith("Z") else "s:" + out
+    row = out.rsplit(None, 1)                       # the start time, then the state
+    if len(row) != 2 or row[1].startswith("Z"):     # no such process, or one that has exited (a zombie)
+        return None
+    return "s:" + row[0]                            # the start time alone: it does not change while it lives
 os.set_blocking(0, True)
 data = b""
 while True:
@@ -134,12 +137,27 @@ _watchers_lock = threading.Lock()
 
 
 def _start_token(pid: int) -> str:
+    """The identity of the process at `pid`: its start time, and "" when there is none or it has exited.
+
+    The start time alone, not the `stat` column beside it: `stat` follows the process's state (R while it starts,
+    S once it sleeps, T when it is stopped), so a token that held it stopped matching a child that had merely gone
+    to sleep, and the watcher then left that child alive."""
     try:
         out = subprocess.run(["ps", "-o", "lstart=,stat=", "-p", str(pid)], capture_output=True, text=True,
                              timeout=5).stdout.strip()
     except (OSError, subprocess.SubprocessError):
         return ""
-    return "" if not out or out.endswith("Z") else "s:" + out
+    return _identity(out)
+
+
+def _identity(row: str) -> str:
+    """`ps -o lstart=,stat=` output -> "s:<start time>"; "" when there is no row or the process is a zombie (it has
+    exited; only its parent has not collected it).  The watcher carries its own copy of this rule: it runs with -S,
+    before any of this package is importable."""
+    parts = (row or "").strip().rsplit(None, 1)      # the start time, then the state
+    if len(parts) != 2 or parts[1].startswith("Z"):
+        return ""
+    return "s:" + parts[0]
 
 
 def _watch(child: subprocess.Popen) -> None:

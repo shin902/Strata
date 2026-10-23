@@ -27,6 +27,9 @@ SERVER = textwrap.dedent("""
     from serve import lifeline
     mode = sys.argv[1]
     sleeper = [sys.executable, "-c", "import time; time.sleep(600)"]
+    if mode == "stubborn":                     # ignores SIGTERM: only the watcher's escalation to SIGKILL ends it
+        sleeper = [sys.executable, "-c",
+                   "import signal, time; signal.signal(signal.SIGTERM, signal.SIG_IGN); time.sleep(600)"]
     out = {{"mechanism": lifeline.mechanism()}}
     if mode == "thread":                       # started on a request thread that ends at once
         box = []
@@ -105,6 +108,14 @@ class Lifeline(unittest.TestCase):
     def test_the_portable_watcher_ends_the_child_when_the_server_is_killed(self):
         self.assertEqual(self._killed_parent_takes_the_child(STRATA_LIFELINE="watcher"), "watcher")
 
+    @unittest.skipUnless(POSIX, "the portable watcher is the POSIX path")
+    def test_the_watcher_kills_a_child_that_ignores_sigterm(self):
+        """A child that ignores SIGTERM must still be ended: the watcher identifies it, then escalates to SIGKILL."""
+        proc, info = self.launch("stubborn", STRATA_LIFELINE="watcher")
+        self.assertTrue(alive(info["child"]))
+        self.hard_kill(proc)
+        self.assertTrue(self.wait_gone(info["child"], seconds=20), "the child outlived the escalation to SIGKILL")
+
     @unittest.skipUnless(sys.platform.startswith("linux"), "PR_SET_PDEATHSIG is Linux")
     def test_a_child_started_on_a_request_thread_outlives_that_thread_but_not_the_server(self):
         proc, info = self.launch("thread")
@@ -132,6 +143,50 @@ class Lifeline(unittest.TestCase):
         self.assertEqual(data["token"], procs.start_token(info["child"]))
         self.hard_kill(proc)
         self.assertTrue(self.wait_gone(info["child"]))
+
+
+class Identity(unittest.TestCase):
+    """The token the watcher holds is the child's start time.  The child's state (R while it starts, S once it
+    sleeps, T when it is stopped) is not part of it: the same process must keep the same token, and only an exited
+    one loses it."""
+
+    @staticmethod
+    def state(pid: int) -> str:
+        return subprocess.run(["ps", "-o", "stat=", "-p", str(pid)], capture_output=True, text=True).stdout.strip()
+
+    @classmethod
+    def wait_state(cls, pid: int, letter: str, seconds: float = 5.0) -> bool:
+        deadline = time.monotonic() + seconds
+        while time.monotonic() < deadline:
+            if cls.state(pid).startswith(letter):
+                return True
+            time.sleep(0.02)
+        return False
+
+    @unittest.skipUnless(POSIX, "the ps-based identity is the POSIX path")
+    def test_a_stopped_child_keeps_its_token(self):
+        from serve import lifeline
+        child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+        try:
+            before = lifeline._start_token(child.pid)
+            self.assertTrue(before, "a live child has a token")
+            os.kill(child.pid, signal.SIGSTOP)
+            self.assertTrue(self.wait_state(child.pid, "T"), "the child did not stop")
+            self.assertEqual(lifeline._start_token(child.pid), before, "a state change changed the child's identity")
+        finally:
+            child.kill()
+            child.wait(timeout=10)
+
+    @unittest.skipUnless(POSIX, "the ps-based identity is the POSIX path")
+    def test_an_exited_child_has_no_token(self):
+        from serve import lifeline
+        child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+        try:
+            os.kill(child.pid, signal.SIGKILL)
+            self.assertTrue(self.wait_state(child.pid, "Z"), "the child did not become a zombie")
+            self.assertEqual(lifeline._start_token(child.pid), "", "an exited child must not look like a live one")
+        finally:
+            child.wait(timeout=10)
 
 
 if __name__ == "__main__":
