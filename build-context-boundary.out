@@ -1,0 +1,822 @@
+[0/2] Re-checking globbed directories...
+[1/3] Building CXX object CMakeFiles/strata.dir/src/program/generate.cpp.o
+In file included from /home/shi/Strata/src/program/generate.cpp:30:
+/home/shi/Strata/include/strata/core/on_device.hpp: In destructor ‘strata::core::OnDevice::~OnDevice()’:
+/home/shi/Strata/include/strata/core/on_device.hpp:17:51: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+   17 |     ~OnDevice() { if (previous >= 0) cudaSetDevice(previous); }
+In file included from /home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime.h:49,
+                 from /home/shi/Strata/include/strata/hip_compat/cuda_runtime.h:12,
+                 from <コマンドライン>:
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2399:12: note: in call to ‘hipError_t hipSetDevice(int)’, declared here
+ 2399 | hipError_t hipSetDevice(int deviceId);
+      |            ^~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘void {無名}::mem_mark(const char*)’:
+/home/shi/Strata/src/program/generate.cpp:1205:19: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 1205 |     cudaMemGetInfo(&free_b, &total_b);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘double {無名}::probe_pcie_h2d_gbps(std::string*)’:
+/home/shi/Strata/src/program/generate.cpp:1454:21: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 1454 |         cudaFreeHost(h);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4938:12: note: in call to ‘hipError_t hipFreeHost(void*)’, declared here
+ 4938 | hipError_t hipFreeHost(void* ptr);
+      |            ^~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:1458:20: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 1458 |     cudaMemcpyAsync(d, h, kBytes, cudaMemcpyHostToDevice);   // warmup: context up, copy engine primed
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5386:12: note: in call to ‘hipError_t hipMemcpyAsync(void*, const void*, size_t, hipMemcpyKind, hipStream_t)’, declared here
+ 5386 | hipError_t hipMemcpyAsync(void* dst, const void* src, size_t sizeBytes, hipMemcpyKind kind,
+      |            ^~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:1478:24: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 1478 |         cudaEventRecord(ev[0]);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3631:12: note: in call to ‘hipError_t hipEventRecord(hipEvent_t, hipStream_t)’, declared here
+ 3631 | hipError_t hipEventRecord(hipEvent_t event, hipStream_t stream = NULL);
+      |            ^~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:1480:28: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 1480 |             cudaMemcpyAsync(d, h, kBytes, cudaMemcpyHostToDevice);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5386:12: note: in call to ‘hipError_t hipMemcpyAsync(void*, const void*, size_t, hipMemcpyKind, hipStream_t)’, declared here
+ 5386 | hipError_t hipMemcpyAsync(void* dst, const void* src, size_t sizeBytes, hipMemcpyKind kind,
+      |            ^~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:1481:28: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 1481 |             cudaEventRecord(ev[b + 1]);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3631:12: note: in call to ‘hipError_t hipEventRecord(hipEvent_t, hipStream_t)’, declared here
+ 3631 | hipError_t hipEventRecord(hipEvent_t event, hipStream_t stream = NULL);
+      |            ^~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:1486:52: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 1486 |     for (int i = 0; i < n_ev; ++i) cudaEventDestroy(ev[i]);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3651:12: note: in call to ‘hipError_t hipEventDestroy(hipEvent_t)’, declared here
+ 3651 | hipError_t hipEventDestroy(hipEvent_t event);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:1500:13: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 1500 |     cudaFree(d);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4926:12: note: in call to ‘hipError_t hipFree(void*)’, declared here
+ 4926 | hipError_t hipFree(void* ptr);
+      |            ^~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:1501:17: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 1501 |     cudaFreeHost(h);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4938:12: note: in call to ‘hipError_t hipFreeHost(void*)’, declared here
+ 4938 | hipError_t hipFreeHost(void* ptr);
+      |            ^~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘int main(int, char**)’:
+/home/shi/Strata/src/program/generate.cpp:1924:25: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 1924 |         cudaGetLastError();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2903:12: note: in call to ‘hipError_t hipGetLastError()’, declared here
+ 2903 | hipError_t hipGetLastError(void);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:2030:93: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 2030 |                     if (cudaGetDeviceProperties(&prop, d) != cudaSuccess) { cudaGetLastError(); own = false; break; }
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2903:12: note: in call to ‘hipError_t hipGetLastError()’, declared here
+ 2903 | hipError_t hipGetLastError(void);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:2052:25: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 2052 |         cudaGetLastError();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2903:12: note: in call to ‘hipError_t hipGetLastError()’, declared here
+ 2903 | hipError_t hipGetLastError(void);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:2617:25: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 2617 |         cudaGetLastError();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2903:12: note: in call to ‘hipError_t hipGetLastError()’, declared here
+ 2903 | hipError_t hipGetLastError(void);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:2625:33: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 2625 |                 cudaGetLastError();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2903:12: note: in call to ‘hipError_t hipGetLastError()’, declared here
+ 2903 | hipError_t hipGetLastError(void);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:2635:23: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 2635 |         cudaMemGetInfo(&free_b, &total_b);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:2922:27: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 2922 |             cudaMemGetInfo(&fb, &tb);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:2927:36: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 2927 |             cudaGetDeviceProperties(&dp, 0);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2520:12: note: in call to ‘hipError_t hipGetDevicePropertiesR0600(hipDeviceProp_tR0600*, int)’, declared here
+ 2520 | hipError_t hipGetDeviceProperties(hipDeviceProp_t* prop, int deviceId);
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:2991:29: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 2991 |             cudaGetLastError();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2903:12: note: in call to ‘hipError_t hipGetLastError()’, declared here
+ 2903 | hipError_t hipGetLastError(void);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:2993:27: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 2993 |             cudaMemGetInfo(&free_b, &total_b);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘int main(int, char**)’:
+/home/shi/Strata/src/program/generate.cpp:3062:27: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3062 |             cudaMemGetInfo(&fb, &tb);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:3253:35: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3253 |             cudaDeviceGetAttribute(&sms, cudaDevAttrMultiProcessorCount, dev);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2449:12: note: in call to ‘hipError_t hipDeviceGetAttribute(int*, hipDeviceAttribute_t, int)’, declared here
+ 2449 | hipError_t hipDeviceGetAttribute(int* pi, hipDeviceAttribute_t attr, int deviceId);
+      |            ^~~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:3255:29: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3255 |             cudaGetLastError();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2903:12: note: in call to ‘hipError_t hipGetLastError()’, declared here
+ 2903 | hipError_t hipGetLastError(void);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:3692:27: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3692 |             cudaMemGetInfo(&before, &total_b);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:3695:27: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3695 |             cudaMemGetInfo(&fb, &tb);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:3786:23: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3786 |         cudaMemGetInfo(&fb, &tb);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:3843:37: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3843 |                     cudaGetLastError();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2903:12: note: in call to ‘hipError_t hipGetLastError()’, declared here
+ 2903 | hipError_t hipGetLastError(void);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:3844:49: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3844 |                     if (buf != nullptr) cudaFree(buf);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4926:12: note: in call to ‘hipError_t hipFree(void*)’, declared here
+ 4926 | hipError_t hipFree(void* ptr);
+      |            ^~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:3846:35: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3846 |                     cudaMemGetInfo(&fb, &tb);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:3856:34: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3856 |             cudaDeviceSynchronize();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2355:12: note: in call to ‘hipError_t hipDeviceSynchronize()’, declared here
+ 2355 | hipError_t hipDeviceSynchronize(void);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:3858:27: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3858 |             cudaMemGetInfo(&fb, &tb);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:3983:37: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3983 |         if (!named) cudaGetLastError();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2903:12: note: in call to ‘hipError_t hipGetLastError()’, declared here
+ 2903 | hipError_t hipGetLastError(void);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:4508:23: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 4508 |             cudaMemset(xcache.device_slot(0), 0, (size_t) xcache.bytes());
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5397:12: note: in call to ‘hipError_t hipMemset(void*, int, size_t)’, declared here
+ 5397 | hipError_t hipMemset(void* dst, int value, size_t sizeBytes);
+      |            ^~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:4509:34: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 4509 |             cudaDeviceSynchronize();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2355:12: note: in call to ‘hipError_t hipDeviceSynchronize()’, declared here
+ 2355 | hipError_t hipDeviceSynchronize(void);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:4629:27: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 4629 |             cudaMemGetInfo(&fb, &tb);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:4714:27: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 4714 |             cudaMemGetInfo(&fb, &tb);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:5352:17: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 5352 |         cudaFree(d_next);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4926:12: note: in call to ‘hipError_t hipFree(void*)’, declared here
+ 4926 | hipError_t hipFree(void* ptr);
+      |            ^~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:5944:32: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 5944 |                 cudaMemcpyAsync(xcache.device_slot((int32_t) s), b, (size_t) lay.blob_bytes(l), cudaMemcpyHostToDevice,
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5386:12: note: in call to ‘hipError_t hipMemcpyAsync(void*, const void*, size_t, hipMemcpyKind, hipStream_t)’, declared here
+ 5386 | hipError_t hipMemcpyAsync(void* dst, const void* src, size_t sizeBytes, hipMemcpyKind kind,
+      |            ^~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:6427:35: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 6427 |                     cudaMemGetInfo(&fb, &tb);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘int main(int, char**)’:
+/home/shi/Strata/src/program/generate.cpp:6542:28: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 6542 |                     res_put(d_res);
+      |                     ~~~~~~~^~~~~~~
+/home/shi/Strata/src/program/generate.cpp:5469:20: note: in call to ‘main(int, char**)::<ラムダ(int32_t*)>’, declared here
+ 5469 |     auto res_put = [&host_res](int32_t* dst) -> cudaError_t {
+      |                    ^
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:6545:28: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 6545 |                     res_put(st->d_res);
+      |                     ~~~~~~~^~~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:5469:20: note: in call to ‘main(int, char**)::<ラムダ(int32_t*)>’, declared here
+ 5469 |     auto res_put = [&host_res](int32_t* dst) -> cudaError_t {
+      |                    ^
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:6784:33: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 6784 |                 cudaGetLastError();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2903:12: note: in call to ‘hipError_t hipGetLastError()’, declared here
+ 2903 | hipError_t hipGetLastError(void);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:6792:55: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 6792 |                 if (!pl_snap_overlap) cudaGetLastError();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2903:12: note: in call to ‘hipError_t hipGetLastError()’, declared here
+ 2903 | hipError_t hipGetLastError(void);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:6847:38: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 6847 |                 cudaStreamSynchronize(PV[st][0]->stream());
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3118:12: note: in call to ‘hipError_t hipStreamSynchronize(hipStream_t)’, declared here
+ 3118 | hipError_t hipStreamSynchronize(hipStream_t stream);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:6850:34: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 6850 |             cudaStreamSynchronize(mtp.stream());
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3118:12: note: in call to ‘hipError_t hipStreamSynchronize(hipStream_t)’, declared here
+ 3118 | hipError_t hipStreamSynchronize(hipStream_t stream);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘int main(int, char**)’:
+/home/shi/Strata/src/program/generate.cpp:7266:33: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 7266 |         cudaEventCreateWithFlags(&adapt_ev, cudaEventDisableTiming);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3549:12: note: in call to ‘hipError_t hipEventCreateWithFlags(ihipEvent_t**, unsigned int)’, declared here
+ 3549 | hipError_t hipEventCreateWithFlags(hipEvent_t* event, unsigned flags);
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:7270:24: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 7270 |                 res_put(d_res);
+      |                 ~~~~~~~^~~~~~~
+/home/shi/Strata/src/program/generate.cpp:5469:20: note: in call to ‘main(int, char**)::<ラムダ(int32_t*)>’, declared here
+ 5469 |     auto res_put = [&host_res](int32_t* dst) -> cudaError_t {
+      |                    ^
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:7273:24: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 7273 |                 res_put(st->d_res);
+      |                 ~~~~~~~^~~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:5469:20: note: in call to ‘main(int, char**)::<ラムダ(int32_t*)>’, declared here
+ 5469 |     auto res_put = [&host_res](int32_t* dst) -> cudaError_t {
+      |                    ^
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:7279:43: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 7279 |             if (wait) cudaEventSynchronize(adapt_ev);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3670:12: note: in call to ‘hipError_t hipEventSynchronize(hipEvent_t)’, declared here
+ 3670 | hipError_t hipEventSynchronize(hipEvent_t event);
+      |            ^~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:7283:51: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 7283 |                     if (wait) cudaEventSynchronize(st->adapt_ev);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3670:12: note: in call to ‘hipError_t hipEventSynchronize(hipEvent_t)’, declared here
+ 3670 | hipError_t hipEventSynchronize(hipEvent_t event);
+      |            ^~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:7403:48: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 7403 |             if (!swaps.empty()) cudaEventRecord(adapt_ev, adapt_stream);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3631:12: note: in call to ‘hipError_t hipEventRecord(hipEvent_t, hipStream_t)’, declared here
+ 3631 | hipError_t hipEventRecord(hipEvent_t event, hipStream_t stream = NULL);
+      |            ^~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:7408:36: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 7408 |                     cudaEventRecord(st->adapt_ev, st->adapt_stream);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3631:12: note: in call to ‘hipError_t hipEventRecord(hipEvent_t, hipStream_t)’, declared here
+ 3631 | hipError_t hipEventRecord(hipEvent_t event, hipStream_t stream = NULL);
+      |            ^~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘int main(int, char**)’:
+/home/shi/Strata/src/program/generate.cpp:7852:27: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 7852 |             cudaMemGetInfo(&free_b, &total_b);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:7888:27: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 7888 |             cudaMemGetInfo(&free_b, &total_b);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:8022:27: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 8022 |             cudaMemGetInfo(&free_b, &total_b);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:8078:27: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 8078 |             cudaMemGetInfo(&free_b, &total_b);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:8448:30: warning: unused variable ‘w’ [-Wunused-variable]
+ 8448 |                 const double w = (double) bt_windows, wall = std::chrono::duration<double, std::milli>(Clock::now() - bt_start).count();
+      |                              ^
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:8708:103: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 8708 |                     if (!kvg_ensure((int64_t) image.live.ids.size() + 256, [&] { cudaDeviceSynchronize(); apply_pending(true); })) {
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2355:12: note: in call to ‘hipError_t hipDeviceSynchronize()’, declared here
+ 2355 | hipError_t hipDeviceSynchronize(void);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘int main(int, char**)’:
+/home/shi/Strata/src/program/generate.cpp:8877:38: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 8877 |                 cudaDeviceSynchronize();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2355:12: note: in call to ‘hipError_t hipDeviceSynchronize()’, declared here
+ 2355 | hipError_t hipDeviceSynchronize(void);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:8885:46: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 8885 |                         cudaDeviceSynchronize();
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2355:12: note: in call to ‘hipError_t hipDeviceSynchronize()’, declared here
+ 2355 | hipError_t hipDeviceSynchronize(void);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:8946:58: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 8946 |             auto kv_quiesce = [&] { cudaDeviceSynchronize(); apply_pending(true); };
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2355:12: note: in call to ‘hipError_t hipDeviceSynchronize()’, declared here
+ 2355 | hipError_t hipDeviceSynchronize(void);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘int main(int, char**)’:
+/home/shi/Strata/src/program/generate.cpp:9157:38: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 9157 |                 cudaStreamSynchronize(main_stream);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3118:12: note: in call to ‘hipError_t hipStreamSynchronize(hipStream_t)’, declared here
+ 3118 | hipError_t hipStreamSynchronize(hipStream_t stream);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:9161:42: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 9161 |                     cudaStreamSynchronize(st->stream);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3118:12: note: in call to ‘hipError_t hipStreamSynchronize(hipStream_t)’, declared here
+ 3118 | hipError_t hipStreamSynchronize(hipStream_t stream);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:9176:42: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 9176 |                     cudaStreamSynchronize(main_stream);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3118:12: note: in call to ‘hipError_t hipStreamSynchronize(hipStream_t)’, declared here
+ 3118 | hipError_t hipStreamSynchronize(hipStream_t stream);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:9180:46: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 9180 |                         cudaStreamSynchronize(st->stream);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3118:12: note: in call to ‘hipError_t hipStreamSynchronize(hipStream_t)’, declared here
+ 3118 | hipError_t hipStreamSynchronize(hipStream_t stream);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:9315:48: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 9315 |                             cudaStreamWaitEvent(v.stream(), pl_mtp_ev[l1 & 1], 0);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3145:12: note: in call to ‘hipError_t hipStreamWaitEvent(hipStream_t, hipEvent_t, unsigned int)’, declared here
+ 3145 | hipError_t hipStreamWaitEvent(hipStream_t stream, hipEvent_t event, unsigned int flags __dparm(0));
+      |            ^~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:9330:48: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 9330 |                                 cudaEventRecord(pl_mtp_ev[f1 & 1], mtp.stream());
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3631:12: note: in call to ‘hipError_t hipEventRecord(hipEvent_t, hipStream_t)’, declared here
+ 3631 | hipError_t hipEventRecord(hipEvent_t event, hipStream_t stream = NULL);
+      |            ^~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:9877:44: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 9877 |                            (cudaStreamQuery(pl_snap_stream), true);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3096:12: note: in call to ‘hipError_t hipStreamQuery(hipStream_t)’, declared here
+ 3096 | hipError_t hipStreamQuery(hipStream_t stream);
+      |            ^~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘int main(int, char**)’:
+/home/shi/Strata/src/program/generate.cpp:9977:45: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 9977 |                     cudaEventCreateWithFlags(&fence_ev[0], cudaEventDisableTiming);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3549:12: note: in call to ‘hipError_t hipEventCreateWithFlags(ihipEvent_t**, unsigned int)’, declared here
+ 3549 | hipError_t hipEventCreateWithFlags(hipEvent_t* event, unsigned flags);
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:9978:45: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 9978 |                     cudaEventCreateWithFlags(&exch_ev[0], cudaEventDisableTiming);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3549:12: note: in call to ‘hipError_t hipEventCreateWithFlags(ihipEvent_t**, unsigned int)’, declared here
+ 3549 | hipError_t hipEventCreateWithFlags(hipEvent_t* event, unsigned flags);
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:9982:45: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 9982 |                     cudaEventCreateWithFlags(&fence_ev[1], cudaEventDisableTiming);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3549:12: note: in call to ‘hipError_t hipEventCreateWithFlags(ihipEvent_t**, unsigned int)’, declared here
+ 3549 | hipError_t hipEventCreateWithFlags(hipEvent_t* event, unsigned flags);
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:9983:45: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 9983 |                     cudaEventCreateWithFlags(&exch_ev[1], cudaEventDisableTiming);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3549:12: note: in call to ‘hipError_t hipEventCreateWithFlags(ihipEvent_t**, unsigned int)’, declared here
+ 3549 | hipError_t hipEventCreateWithFlags(hipEvent_t* event, unsigned flags);
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:9988:40: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 9988 |                         cudaEventRecord(ev[0], s0);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3631:12: note: in call to ‘hipError_t hipEventRecord(hipEvent_t, hipStream_t)’, declared here
+ 3631 | hipError_t hipEventRecord(hipEvent_t event, hipStream_t stream = NULL);
+      |            ^~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:9992:36: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 9992 |                     cudaEventRecord(ev[1], PV[1][0]->stream());
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3631:12: note: in call to ‘hipError_t hipEventRecord(hipEvent_t, hipStream_t)’, declared here
+ 3631 | hipError_t hipEventRecord(hipEvent_t event, hipStream_t stream = NULL);
+      |            ^~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘int main(int, char**)’:
+/home/shi/Strata/src/program/generate.cpp:10397:73: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+10397 |                 for (cudaEvent_t ev : fence_ev) if (ev) cudaEventDestroy(ev);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3651:12: note: in call to ‘hipError_t hipEventDestroy(hipEvent_t)’, declared here
+ 3651 | hipError_t hipEventDestroy(hipEvent_t event);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:10398:72: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+10398 |                 for (cudaEvent_t ev : exch_ev) if (ev) cudaEventDestroy(ev);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3651:12: note: in call to ‘hipError_t hipEventDestroy(hipEvent_t)’, declared here
+ 3651 | hipError_t hipEventDestroy(hipEvent_t event);
+      |            ^~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:10502:31: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+10502 |                     cudaMemcpy(d_hist, hist_stage.data(), (size_t) T * (size_t) hist_n * sizeof(int32_t),
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4985:12: note: in call to ‘hipError_t hipMemcpy(void*, const void*, size_t, hipMemcpyKind)’, declared here
+ 4985 | hipError_t hipMemcpy(void* dst, const void* src, size_t sizeBytes, hipMemcpyKind kind);
+      |            ^~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:10507:72: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+10507 |                     !kvg_ensure(p + T + 64, [&] { cudaDeviceSynchronize(); apply_pending(true); })) {
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2355:12: note: in call to ‘hipError_t hipDeviceSynchronize()’, declared here
+ 2355 | hipError_t hipDeviceSynchronize(void);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:10978:86: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+10978 |                 if (!kvg_ensure(n_prompt + o.max_new + 64, [] { cudaDeviceSynchronize(); })) return 1;
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2355:12: note: in call to ‘hipError_t hipDeviceSynchronize()’, declared here
+ 2355 | hipError_t hipDeviceSynchronize(void);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘int main(int, char**)’:
+/home/shi/Strata/src/program/generate.cpp:10984:24: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+10984 |                 res_put(d_res);
+      |                 ~~~~~~~^~~~~~~
+/home/shi/Strata/src/program/generate.cpp:5469:20: note: in call to ‘main(int, char**)::<ラムダ(int32_t*)>’, declared here
+ 5469 |     auto res_put = [&host_res](int32_t* dst) -> cudaError_t {
+      |                    ^
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:11017:82: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11017 |             if (!kvg_ensure(n_prompt + o.max_new + 64, [] { cudaDeviceSynchronize(); })) return 1;
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2355:12: note: in call to ‘hipError_t hipDeviceSynchronize()’, declared here
+ 2355 | hipError_t hipDeviceSynchronize(void);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘int main(int, char**)’:
+/home/shi/Strata/src/program/generate.cpp:11045:20: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11045 |             res_put(d_res);
+      |             ~~~~~~~^~~~~~~
+/home/shi/Strata/src/program/generate.cpp:5469:20: note: in call to ‘main(int, char**)::<ラムダ(int32_t*)>’, declared here
+ 5469 |     auto res_put = [&host_res](int32_t* dst) -> cudaError_t {
+      |                    ^
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:11068:78: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11068 |         if (!kvg_ensure(n_prompt + o.max_new + 64, [] { cudaDeviceSynchronize(); })) return 1;
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2355:12: note: in call to ‘hipError_t hipDeviceSynchronize()’, declared here
+ 2355 | hipError_t hipDeviceSynchronize(void);
+      |            ^~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘int main(int, char**)’:
+/home/shi/Strata/src/program/generate.cpp:11150:23: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11150 |             cudaMemcpy(final_r_host.data(), ss.R, final_r_host.size() * sizeof(float), cudaMemcpyDeviceToHost);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4985:12: note: in call to ‘hipError_t hipMemcpy(void*, const void*, size_t, hipMemcpyKind)’, declared here
+ 4985 | hipError_t hipMemcpy(void* dst, const void* src, size_t sizeBytes, hipMemcpyKind kind);
+      |            ^~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:11372:33: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11372 |         cudaEventCreateWithFlags(&adapt_ev, cudaEventDisableTiming);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3549:12: note: in call to ‘hipError_t hipEventCreateWithFlags(ihipEvent_t**, unsigned int)’, declared here
+ 3549 | hipError_t hipEventCreateWithFlags(hipEvent_t* event, unsigned flags);
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:11378:43: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11378 |             if (wait) cudaEventSynchronize(adapt_ev);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3670:12: note: in call to ‘hipError_t hipEventSynchronize(hipEvent_t)’, declared here
+ 3670 | hipError_t hipEventSynchronize(hipEvent_t event);
+      |            ^~~~~~~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:11396:24: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11396 |                 res_put(d_res);
+      |                 ~~~~~~~^~~~~~~
+/home/shi/Strata/src/program/generate.cpp:5469:20: note: in call to ‘main(int, char**)::<ラムダ(int32_t*)>’, declared here
+ 5469 |     auto res_put = [&host_res](int32_t* dst) -> cudaError_t {
+      |                    ^
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In lambda function:
+/home/shi/Strata/src/program/generate.cpp:11485:48: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11485 |             if (!swaps.empty()) cudaEventRecord(adapt_ev, adapt_stream);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3631:12: note: in call to ‘hipError_t hipEventRecord(hipEvent_t, hipStream_t)’, declared here
+ 3631 | hipError_t hipEventRecord(hipEvent_t event, hipStream_t stream = NULL);
+      |            ^~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp: In function ‘int main(int, char**)’:
+/home/shi/Strata/src/program/generate.cpp:11612:27: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11612 |                 cudaMemcpy(hash_rows.data(), ver.final_R_all(), n_floats * sizeof(float), cudaMemcpyDeviceToHost);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4985:12: note: in call to ‘hipError_t hipMemcpy(void*, const void*, size_t, hipMemcpyKind)’, declared here
+ 4985 | hipError_t hipMemcpy(void* dst, const void* src, size_t sizeBytes, hipMemcpyKind kind);
+      |            ^~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:11787:21: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11787 |         cudaFreeHost(layer_stage);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4938:12: note: in call to ‘hipError_t hipFreeHost(void*)’, declared here
+ 4938 | hipError_t hipFreeHost(void* ptr);
+      |            ^~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:11793:21: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11793 |         cudaFreeHost(half_stage);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4938:12: note: in call to ‘hipError_t hipFreeHost(void*)’, declared here
+ 4938 | hipError_t hipFreeHost(void* ptr);
+      |            ^~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:11959:13: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11959 |     cudaFree(d_next);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4926:12: note: in call to ‘hipError_t hipFree(void*)’, declared here
+ 4926 | hipError_t hipFree(void* ptr);
+      |            ^~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:11960:13: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11960 |     cudaFree(d_logits);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4926:12: note: in call to ‘hipError_t hipFree(void*)’, declared here
+ 4926 | hipError_t hipFree(void* ptr);
+      |            ^~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:11961:13: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11961 |     cudaFree(d_emb);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4926:12: note: in call to ‘hipError_t hipFree(void*)’, declared here
+ 4926 | hipError_t hipFree(void* ptr);
+      |            ^~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:11962:13: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11962 |     cudaFree(d_parts);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4926:12: note: in call to ‘hipError_t hipFree(void*)’, declared here
+ 4926 | hipError_t hipFree(void* ptr);
+      |            ^~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:11963:13: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11963 |     cudaFree(sbuf);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4926:12: note: in call to ‘hipError_t hipFree(void*)’, declared here
+ 4926 | hipError_t hipFree(void* ptr);
+      |            ^~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/program/generate.cpp:11964:13: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+11964 |     cudaFree(arena);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4926:12: note: in call to ‘hipError_t hipFree(void*)’, declared here
+ 4926 | hipError_t hipFree(void* ptr);
+      |            ^~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+[2/3] Linking HIP executable strata

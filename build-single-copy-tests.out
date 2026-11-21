@@ -1,0 +1,5 @@
+[0/2] Re-checking globbed directories...
+[1/5] Building CXX object CMakeFiles/hip_expert_cache_staging.dir/tests/hip/expert_cache_staging.cpp.o
+[2/5] Linking HIP executable hip_expert_cache_staging
+[3/5] Building CXX object CMakeFiles/file_expert_source_test.dir/tests/core/file_expert_source_test.cpp.o
+[4/5] Linking HIP executable file_expert_source_test

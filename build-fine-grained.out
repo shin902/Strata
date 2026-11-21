@@ -1,0 +1,40 @@
+[0/2] Re-checking globbed directories...
+[1/4] Building CXX object CMakeFiles/strata_engine.dir/src/core/expert_cache.cpp.o
+In file included from /home/shi/Strata/src/core/expert_cache.cpp:12:
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_ext.h:56:11: note: attributes may be inserted here
+   56 | extern "C" hipError_t hipExtModuleLaunchKernel(hipFunction_t f, uint32_t globalWorkSizeX,
+      |           ^
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_ext.h:70:11: note: attributes may be inserted here
+   70 | extern "C" hipError_t hipHccModuleLaunchKernel(hipFunction_t f, uint32_t globalWorkSizeX,
+      |           ^
+/home/shi/Strata/src/core/expert_cache.cpp: In function ‘size_t strata::core::device_free_bytes()’:
+/home/shi/Strata/src/core/expert_cache.cpp:33:19: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+   33 |     cudaMemGetInfo(&free_b, &total_b);
+In file included from /home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime.h:49,
+                 from /home/shi/Strata/include/strata/hip_compat/cuda_runtime.h:12,
+                 from <コマンドライン>:
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:5639:12: note: in call to ‘hipError_t hipMemGetInfo(size_t*, size_t*)’, declared here
+ 5639 | hipError_t hipMemGetInfo(size_t* free, size_t* total);
+      |            ^~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/core/expert_cache.cpp: In member function ‘void strata::core::ExpertCache::close()’:
+/home/shi/Strata/src/core/expert_cache.cpp:619:17: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+  619 |         cudaFree(base_);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4926:12: note: in call to ‘hipError_t hipFree(void*)’, declared here
+ 4926 | hipError_t hipFree(void* ptr);
+      |            ^~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/core/expert_cache.cpp:623:17: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+  623 |         cudaFree(base_);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:4926:12: note: in call to ‘hipError_t hipFree(void*)’, declared here
+ 4926 | hipError_t hipFree(void* ptr);
+      |            ^~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+[2/4] Linking HIP static library libstrata_engine.a
+[3/4] Linking HIP executable strata

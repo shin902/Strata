@@ -1,0 +1,34 @@
+[0/2] Re-checking globbed directories...
+[1/4] Building CXX object CMakeFiles/strata_engine.dir/src/core/expert_source.cpp.o
+/home/shi/Strata/src/core/expert_source.cpp: In function ‘void strata::core::expert_hit_run(void*, void*, HitPhase, const int32_t*, int64_t)’:
+/home/shi/Strata/src/core/expert_source.cpp:3336:51: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3336 |         if (d.hit_done != nullptr) cudaEventRecord((cudaEvent_t) d.hit_done, cs);
+In file included from /home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime.h:49,
+                 from /home/shi/Strata/include/strata/hip_compat/cuda_runtime.h:12,
+                 from <コマンドライン>:
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:3631:12: note: in call to ‘hipError_t hipEventRecord(hipEvent_t, hipStream_t)’, declared here
+ 3631 | hipError_t hipEventRecord(hipEvent_t event, hipStream_t stream = NULL);
+      |            ^~~~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/core/expert_source.cpp: In member function ‘bool strata::core::ArenaExpertSource::open(const std::string&, int64_t, int64_t, int, std::string&, uint64_t, const std::string&)’:
+/home/shi/Strata/src/core/expert_source.cpp:3877:22: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3877 |         cudaGetDevice(&dev);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2426:12: note: in call to ‘hipError_t hipGetDevice(int*)’, declared here
+ 2426 | hipError_t hipGetDevice(int* deviceId);
+      |            ^~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+/home/shi/Strata/src/core/expert_source.cpp: In lambda function:
+/home/shi/Strata/src/core/expert_source.cpp:3879:26: warning: ignoring returned value of type ‘hipError_t’, declared with attribute ‘nodiscard’ [-Wunused-result]
+ 3879 |             cudaSetDevice(dev);
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:2399:12: note: in call to ‘hipError_t hipSetDevice(int)’, declared here
+ 2399 | hipError_t hipSetDevice(int deviceId);
+      |            ^~~~~~~~~~~~
+/home/shi/Strata-sdk/rocm-7.14.1/include/hip/hip_runtime_api.h:410:3: note: ‘hipError_t’ declared here
+  410 | } hipError_t;
+      |   ^~~~~~~~~~
+[2/4] Linking HIP static library libstrata_engine.a
+[3/4] Linking HIP executable strata
